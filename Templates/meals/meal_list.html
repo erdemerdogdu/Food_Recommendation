@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meals Page</title>
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .album {
+            background-color: #f8f9fa;
+            padding: 4rem 0;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .card-title {
+            color: #343a40;
+            font-weight: bold;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-text {
+            color: #6c757d;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .list-group-item {
+            background-color: transparent;
+            border: none;
+            color: #6c757d;
+            font-size: 1rem;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .btn-link {
+            flex: 1;
+            margin-right: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            text-align: center;
+            padding: 0.4rem 0.6rem;
+            font-size: 0.9rem;
+        }
+
+        .btn-link:hover {
+            background-color: #0056b3;
+            color: #fff;
+            transform: scale(1.05);
+        }
+
+        /* Animations */
+        .animate {
+            animation-duration: 1s;
+            animation-fill-mode: both;
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes zoomIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    {% include 'bases/navbar.html' %}
+
+    <div class="album">
+        <div class="container">
+
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+                {% for meal in meals %}
+                <div class="col">
+                    <div class="card shadow-sm animate animate__fadeInUp">
+                        <!-- <img src="..." class="card-img-top" alt="Meal Image"> -->
+                        <div class="card-body">
+                            <h5 class="card-title">{{ meal.name }}</h5>
+                            <p class="card-text">{{ meal.description }}</p>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">{{ meal.price }} $</li>
+                            <li class="list-group-item">{{ meal.cuisine_type }} Cuisine</li>
+                        </ul>
+                        <div class="card-body">
+                            <div class="btn-group">
+                                <a href="/reviews/add_review/{{ meal.id }}" class="btn btn-link">Make Review</a>
+                                <a href="/reviews/mealreviews/{{ meal.id }}" class="btn btn-link">Reviews</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% include 'bases/footer.html' %}
+</body>
+
+</html>

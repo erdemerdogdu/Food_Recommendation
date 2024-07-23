@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Restaurant Info</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDvcJ3sDlcyPbbQ7SsjNhMwoM7dTCZdr4E"></script>
+    <script>
+        function initMap() {
+            const address = "{{ restaurant.address|escapejs }}";
+            const geocoder = new google.maps.Geocoder();
+            geocoder.geocode({ 'address': address }, function (results, status) {
+                if (status === 'OK') {
+                    const mapOptions = {
+                        zoom: 16,
+                        center: results[0].geometry.location,
+                        streetViewControl: false
+                    };
+                    const map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+                    const marker = new google.maps.Marker({
+                        position: results[0].geometry.location,
+                        map: map
+                    });
+                } else {
+                    alert('Geocode was not successful for the following reason: ' + status);
+                }
+            });
+        }
+    </script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .container {
+            margin-top: 50px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .card {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            animation: slideUp 0.5s ease;
+        }
+
+        .card-header {
+            background-color: #4caf50;
+            color: white;
+            padding: 1rem;
+            font-size: 1.75rem;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .card-body {
+            padding: 2rem;
+            background-color: #ffffff;
+        }
+
+        .info-item {
+            display: flex;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #343a40;
+            min-width: 150px;
+        }
+
+        .info-value {
+            color: #6c757d;
+            flex: 1;
+        }
+
+        .map-container {
+            margin-top: 30px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .info-category {
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 1px solid #dee2e6;
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #343a40;
+        }
+    </style>
+</head>
+<body onload="initMap()">
+{% include 'bases/navbar.html' %}
+    <div class="container d-flex justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    Restaurant Information
+                </div>
+                <div class="card-body">
+                    <div class="info-item">
+                        <div class="info-label">Name:</div>
+                        <div class="info-value">{{ restaurant.name }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Address:</div>
+                        <div class="info-value" id="address">{{ restaurant.address }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Phone:</div>
+                        <div class="info-value">{{ restaurant.phone_number }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Opening Hours:</div>
+                        <div class="info-value">{{ restaurant.opening_hours }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Restaurant Owner:</div>
+                        <div class="info-value">{{ restaurant.owner.first_name }} {{ restaurant.owner.last_name }}</div>
+                    </div>
+                    <div class="map-container">
+                        <div class="info-category">Location</div>
+                        <!-- Placeholder for the map -->
+                        <div id="map" style="width: 100%; height: 400px; border-radius: 10px; margin-top: 10px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% include 'bases/footer.html' %}
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meals by Cuisines</title>
+
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #343a40;
+        }
+
+        .accordion-button {
+            background-color: #6a89cc;
+            color: white;
+            border: 2px solid #6a89cc;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .accordion-button:hover {
+            background-color: #82ccdd;
+            color: #fff;
+        }
+
+        .accordion-button:not(.collapsed) {
+            background-color: #82ccdd;
+            color: white;
+            border: 2px solid #82ccdd;
+        }
+
+        .accordion-item {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+        }
+
+        .accordion-body {
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 1.5rem;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-title {
+            color: #343a40;
+            font-weight: bold;
+            font-size: 1.25rem;
+        }
+
+        .card-text {
+            color: #6c757d;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background-color: #ff6b6b;
+            border: none;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #d43f3f;
+            transform: scale(1.05);
+        }
+
+        .animate__animated {
+            animation-duration: 1s;
+            animation-fill-mode: both;
+        }
+    </style>
+</head>
+<body>
+    {% include 'bases/navbar.html' %}
+
+    <div class="container">
+        <h1 class="animate__animated animate__fadeInDown">Meals by Cuisines</h1>
+        <div class="accordion" id="cuisineAccordion">
+            {% for cuisine, meals in cuisines.items %}
+                <div class="accordion-item animate__animated animate__fadeInUp" style="--animate-delay: {{ forloop.counter0|add:1 }}00ms;">
+                    <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse{{ forloop.counter }}">
+                            {{ cuisine }}
+                        </button>
+                    </h2>
+                    <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="heading{{ forloop.counter }}" data-bs-parent="#cuisineAccordion">
+                        <div class="accordion-body">
+                            <div class="row">
+                                {% for meal in meals %}
+                                    <div class="col-md-4">
+                                        <div class="card mb-4 animate__animated animate__zoomIn" style="--animate-delay: {{ forloop.counter0|add:1 }}00ms;">
+                                            <div class="card-body">
+                                                <h5 class="card-title">{{ meal.name }}</h5>
+                                                <p class="card-text">Price: ${{ meal.price }}</p>
+                                                <p class="card-text">Restaurant: {{ meal.restaurant.name }}</p>
+                                                <a href="/reviews/mealreviews/{{meal.id}}" class="btn btn-primary">Reviews</a>
+                                                <a href="/reviews/add_review/{{meal.id}}" class="btn btn-primary">Make A Review</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% include 'bases/footer.html' %}
+</body>
+</html>

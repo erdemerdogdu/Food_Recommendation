@@ -1,0 +1,63 @@
+<style>
+    #popup{
+        position: absolute;
+        background-color: white;
+        border: 1px solid #ccc;
+        padding: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .star-rating {
+            font-size: 2rem;
+            color: #e0e0e0; /* Light gray for unfilled stars */
+            display: inline-block;
+            margin: 0 auto;
+        }
+
+    .star-rating .filled {
+            color: #ffc107; /* Yellow for filled stars */
+        }
+
+    .card-text{
+        margin: 0;
+        color: #6c757d;
+    }
+</style>
+
+<div>
+    <p class="card-text">Average Delivery Rating:</p>
+        <div class="star-rating">
+            {% for i in "12345" %}
+                {% if i|add:0 <= avg_delivery_rating %}
+                    <span class="filled">&#9733;</span>
+                {% else %}
+                    <span>&#9733;</span>
+                {% endif %}
+            {% endfor %}
+            <span>({{ avg_delivery_rating|floatformat:1 }}/5)</span>
+        </div>
+
+    <p class="card-text">Average Taste Rating:</p>
+        <div class="star-rating">
+            {% for i in "12345" %}
+                {% if i|add:0 <= avg_taste_rating %}
+                    <span class="filled">&#9733;</span>
+                {% else %}
+                    <span>&#9733;</span>
+                {% endif %}
+            {% endfor %}
+            <span>({{ avg_taste_rating|floatformat:1 }}/5)</span>
+        </div>
+
+    <p class="card-text">Average Service Rating:</p>
+        <div class="star-rating">
+            {% for i in "12345" %}
+                {% if i|add:0 <= avg_service_rating %}
+                    <span class="filled">&#9733;</span>
+                {% else %}
+                    <span>&#9733;</span>
+                {% endif %}
+            {% endfor %}
+            <span>({{ avg_service_rating|floatformat:1 }}/5)</span>
+        </div>
+    <p class="card-text">Total Reviews: {{ total_reviews }}</p>
+</div>

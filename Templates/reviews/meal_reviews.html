@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ meal.name }} Reviews</title>
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <style>
+        body {
+            background-color: #f8f9fa;
+            color: #343a40;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        .star-rating {
+            font-size: 2rem;
+            color: #e0e0e0; /* Light gray for unfilled stars */
+            display: inline-block;
+        }
+
+        .star-rating .filled {
+            color: #ffc107; /* Yellow for filled stars */
+        }
+
+        .card {
+            background-color: #fff;
+            border: 1px solid rgba(0,0,0,.125);
+            border-radius: .25rem;
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            color: #007bff;
+        }
+
+
+        .pagination {
+            margin-top: 20px;
+        }
+
+        .page-item.active .page-link {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .page-link {
+            color: #007bff;
+        }
+
+        .page-link:hover {
+            color: #0056b3;
+        }
+
+        .page-item.disabled .page-link {
+            color: #6c757d;
+        }
+
+
+
+        footer {
+            background-color: #343a40;
+            color: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .ratings{
+            display:flex;
+        }
+        .ratingtype{
+            width:35%;
+            max-width: 100px;
+            transform: translate(0,20%);
+        }
+        .ratingtype p{
+            font-size: 20px;
+            font-weight: bold;
+            justify-content: center;
+            margin-left: 0;
+        }
+
+        .comment p{
+            font-size: 20px;
+            margin-top: 20px;
+        }
+        .date{
+            margin-top: 10px;
+        }
+        .date p{
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    {% include 'bases/navbar.html' %}
+
+    <!-- Main Content -->
+    <div class="container mt-5" id="reviewsContainer">
+        <h1 class="text-center mb-5">Reviews for {{ meal.name }}</h1>
+        <div id="reviewsList">
+            {% for review in reviews %}
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Review for {{ review.meal.name }} by {{ review.user.get_full_name }}</h5>
+                        <div class="comment">
+                            <p>{{ review.comment }}</p>
+                        </div>
+                        <div class="ratings">
+                            <div class="ratingtype">
+                                <p>Service :</p>
+                            </div>
+                            <div class="star-rating">
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= review.service_rating %}
+                                        <span class="filled">&#9733;</span>
+                                    {% else %}
+                                        <span>&#9733;</span>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="ratings">
+                            <div class="ratingtype">
+                                <p>Delivery :</p>
+                            </div>
+                            <div class="star-rating">
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= review.delivery_rating %}
+                                        <span class="filled">&#9733;</span>
+                                    {% else %}
+                                        <span>&#9733;</span>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="ratings">
+                            <div class="ratingtype">
+                                <p>Taste :</p>
+                            </div>
+                            <div class="star-rating">
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= review.taste_rating %}
+                                        <span class="filled">&#9733;</span>
+                                    {% else %}
+                                        <span>&#9733;</span>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="date">
+                            <p>Posted on: {{ review.created_at }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination Links -->
+        <div class="d-flex justify-content-center mt-4">
+            <ul class="pagination">
+                {% if reviews.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ reviews.previous_page_number }}">Previous</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">Previous</span>
+                    </li>
+                {% endif %}
+
+                {% if reviews.number > 5 %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1">1</a>
+                    </li>
+                    <li class="page-item disabled">
+                        <span class="page-link">..</span>
+                    </li>
+                {% endif %}
+
+                {% for num in reviews.paginator.page_range %}
+                    {% if num >= reviews.number|add:-4 and num <= reviews.number|add:5 %}
+                        <li class="page-item {% if num == reviews.number %}active{% endif %}">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if reviews.paginator.num_pages > reviews.number|add:5 %}
+                    <li class="page-item disabled">
+                        <span class="page-link">..</span>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ reviews.paginator.num_pages }}">{{ reviews.paginator.num_pages }}</a>
+                    </li>
+                {% endif %}
+
+                {% if reviews.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ reviews.next_page_number }}">Next</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">Next</span>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+    {% include 'bases/footer.html' %}
+</body>
+</html>

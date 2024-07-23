@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Reviews Summary</title>
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <style>
+        .rating .fa-star {
+            color: gold;
+        }
+    </style>
+</head>
+<body>
+{% include 'bases/navbar.html' %}
+    <div class="container mt-5">
+        <h1 class="mb-4">Restaurant Reviews Summary</h1>
+        <div class="row">
+            {% for summary in summaries %}
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ summary.restaurant.name }}</h5>
+                        <p class="card-text">Average Delivery Rating:
+                            <div class="rating">
+                                {% for i in "12345" %}
+                                    <span class="fa fa-star{% if i|floatformat:1 > summary.avg_delivery|floatformat:1 %}-o{% endif %}"></span>
+                                {% endfor %}
+                                <span>({{ summary.avg_delivery|floatformat:1 }}/5)</span>
+                            </div>
+                        </p>
+                        <p class="card-text">Average Taste Rating:
+                            <div class="rating">
+                                {% for i in "12345" %}
+                                    <span class="fa fa-star{% if i|floatformat:1 > summary.avg_taste|floatformat:1 %}-o{% endif %}"></span>
+                                {% endfor %}
+                                <span>({{ summary.avg_taste|floatformat:1 }}/5)</span>
+                            </div>
+                        </p>
+                        <p class="card-text">Average Service Rating:
+                            <div class="rating">
+                                {% for i in "12345" %}
+                                    <span class="fa fa-star{% if i|floatformat:1 > summary.avg_service|floatformat:1 %}-o{% endif %}"></span>
+                                {% endfor %}
+                                <span>({{ summary.avg_service|floatformat:1 }}/5)</span>
+                            </div>
+                        </p>
+                        <p class="card-text">Total Average Rating:
+                            <div class="rating">
+                                {% for i in "12345" %}
+                                    <span class="fa fa-star{% if i|floatformat:1 > summary.total_avg|floatformat:1 %}-o{% endif %}"></span>
+                                {% endfor %}
+                                <span>({{ summary.total_avg|floatformat:1 }}/5)</span>
+                            </div>
+                        </p>
+                        <p class="card-text">Total Reviews: {{ summary.review_count }}</p>
+                        <p class="card-text">Best Meal: {{ summary.best_meal.name }} ({{ summary.best_meal.total_avg_rating|floatformat:1 }}/5)</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% include 'bases/footer.html' %}
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Restaurant Page</title>
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .album {
+            background-color: #f8f9fa;
+            padding: 4rem 0;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-title {
+            color: #343a40;
+            font-weight: bold;
+        }
+
+
+        .list-group-item {
+            background-color: transparent;
+            border: none;
+            color: #6c757d;
+        }
+
+
+        .btn-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .btn-link {
+            flex: 1;
+            margin-right: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            text-align: center;
+            padding: 0.4rem 0.6rem;
+            font-size: 0.9rem;
+        }
+
+        .btn-link:hover {
+            background-color: #0056b3;
+            color: #fff;
+            transform: scale(1.05);
+        }
+
+        .animate {
+            animation-duration: 1s;
+            animation-fill-mode: both;
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes zoomIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+    {% include 'bases/navbar.html' %}
+
+    <div class="album">
+        <div class="container">
+
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                {% for restaurant in restaurants %}
+                <div class="col">
+                    <div class="col">
+    <div class="card shadow-sm animate animate__fadeInUp" data-restaurant-id="{{ restaurant.id }}">
+        <!-- <img src="..." class="card-img-top" alt="Restaurant Image"> -->
+        <div class="card-body">
+            <h5 class="card-title">{{ restaurant.name }}</h5>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">{{ restaurant.address }}</li>
+            <li class="list-group-item">{{ restaurant.opening_hours }}</li>
+            <li class="list-group-item">{{ restaurant.phone_number }}</li>
+        </ul>
+        <div class="card-body">
+            <div class="btn-group">
+                <a href="info/{{restaurant.id}}" class="btn btn-link">Info</a>
+                <a href="/meals/{{restaurant.id}}" class="btn btn-link">Meals</a>
+                <a href="/reviews/{{restaurant.id}}" class="btn btn-link">Reviews</a>
+            </div>
+        </div>
+    </div>
+</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+
+    {% include 'bases/footer.html' %}
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const restaurantCards = document.querySelectorAll('.card');
+        const popup = document.createElement('div');
+        popup.id = 'popup';
+        document.body.appendChild(popup);
+
+        restaurantCards.forEach(card => {
+            card.addEventListener('mouseenter', function (event) {
+                const restaurantId = card.getAttribute('data-restaurant-id');
+                const rect = card.getBoundingClientRect();
+
+                fetch(`ajax/reviews_statistics/${restaurantId}/`)
+                    .then(response => response.text())
+                    .then(html => {
+                        popup.innerHTML = html;
+                        popup.style.top = `${rect.bottom + window.scrollY}px`;
+                        popup.style.left = `${rect.left}px`;
+                        popup.style.display = 'block';
+                    })
+                    .catch(error => {
+                        console.error('Error fetching review statistics:', error);
+                    });
+            });
+
+            card.addEventListener('mouseleave', function () {
+                popup.style.display = 'none';
+            });
+        });
+    });
+</script>
+</body>
+
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unauthorized Access</title>
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+</head>
+<body>
+    {% include 'bases/navbar.html' %}
+
+    <div class="container mt-5">
+        <div class="alert alert-danger" role="alert">
+            <h4 class="alert-heading">Unauthorized Access</h4>
+            <p>You do not have the necessary permissions to access this page. Please contact the administrator if you believe this is an error.</p>
+            <hr>
+            <a href="/home" class="btn btn-primary">Go to Home</a>
+        </div>
+    </div>
+    {% include 'bases/footer.html' %}
+    {% bootstrap_javascript %}
+</body>
+</html>

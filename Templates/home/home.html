@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foodle - Discover Deliciousness</title>
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <style>
+        /* Global styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* Header section */
+        .header {
+            background: linear-gradient(45deg, #ff6b6b, #f8c291);
+            color: white;
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: slideInDown 1s ease;
+        }
+
+        .header p {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            animation: slideInUp 1s ease;
+        }
+
+        /* Features section */
+        .features {
+            padding: 4rem 0;
+            text-align: center;
+            background-color: #fff;
+        }
+
+        .feature-box {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            animation: fadeInLeft 1s ease;
+        }
+
+        .feature-box img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1rem;
+        }
+
+        .feature-box h3 {
+            color: #ff6b6b;
+            margin-bottom: 1rem;
+        }
+
+        .feature-box p {
+            color: #555;
+        }
+
+        /* Call to action section */
+        .cta {
+            background: linear-gradient(45deg, #6a89cc, #82ccdd);
+            color: white;
+            text-align: center;
+            padding: 4rem 0;
+            animation: zoomIn 1s ease;
+        }
+
+        .cta h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .cta p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .cta a {
+            display: inline-block;
+            background-color: #ff6b6b;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .cta a:hover {
+            background-color: #ff4d4d;
+        }
+
+
+
+        /* Animations */
+        @keyframes slideInDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInLeft {
+            0% {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes zoomIn {
+            0% {
+                opacity: 0;
+                transform: scale(0);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+{% include 'bases/navbar.html' %}
+<body>
+    <div class="header">
+        <h1>Welcome to Foodle</h1>
+        <p>Discover Deliciousness - Where Food Lovers Unite</p>
+    </div>
+
+    <div class="features">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="feature-box">
+                        <img src="https://via.placeholder.com/80" alt="Feature Icon">
+                        <h3>Discover</h3>
+                        <p>Explore a vast array of restaurants and cuisines.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-box">
+                        <img src="https://via.placeholder.com/80" alt="Feature Icon">
+                        <h3>Review</h3>
+                        <p>Rate and review meals and restaurants you love.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-box">
+                        <img src="https://via.placeholder.com/80" alt="Feature Icon">
+                        <h3>Connect</h3>
+                        <p>Join a community of food enthusiasts worldwide.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cta">
+        <div class="container">
+            <h2>Start Your Culinary Journey Today</h2>
+            <p>Join Foodle and explore the world of flavors!</p>
+            <a href="#" class="btn">Get Started</a>
+        </div>
+    </div>
+
+    {% include 'bases/footer.html' %}
+</body>
+
+</html>

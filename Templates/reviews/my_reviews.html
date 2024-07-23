@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Reviews</title>
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        .fade-out {
+            opacity: 1;
+            transition: opacity 2s ease-out;
+        }
+        .fade-out.fade {
+            opacity: 0;
+        }
+        .fixed-messages {
+            position: fixed;
+            top: 45px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 800px;
+            z-index: 1050;
+            margin-top: 10px;
+        }
+        .search-container {
+            position: relative;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .search-input {
+            width: 0;
+            height: 38px;
+            padding: 0;
+            border: 1px solid #ced4da;
+            border-radius: .25rem;
+            transition: width 0.4s ease-in-out;
+            visibility: hidden;
+        }
+        .search-input.show {
+            width: 200px;
+            padding: 6px 12px;
+            visibility: visible;
+        }
+        .search-button {
+            background-color: #007bff;
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            cursor: pointer;
+            border-radius: .25rem;
+        }
+        .search-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    {% include 'bases/navbar.html' %}
+
+    <div class="container mt-5">
+        {% if messages %}
+            <div id="messages" class="alert alert-dismissible fade-out fixed-messages">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <h1>My Reviews</h1>
+
+        <!-- Search Form -->
+        <div class="search-container mb-3">
+            <form method="GET" action="{% url 'my_reviews' %}" id="searchForm">
+                <input type="text" class="form-control search-input" placeholder="Search..." name="search" value="{{ search_query }}">
+            </form>
+            <button id="searchBtn" class="search-button">
+               <i class="fas fa-search"></i>
+            </button>
+
+        </div>
+
+        <div class="list-group">
+            {% for review in reviews %}
+                <div class="list-group-item">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h5 class="mb-1">Review for {{ review.meal.name }}</h5>
+                            <p class="mb-1">{{ review.comment }}</p>
+                            <small>
+                                Service Rating: {{ review.service_rating }}<br>
+                                Taste Rating: {{ review.taste_rating }}<br>
+                                Delivery Rating: {{ review.delivery_rating }}<br>
+                                Posted on: {{ review.created_at }}
+                            </small>
+                        </div>
+                        <div>
+                            <a href="edit/{{review.id}}" class="btn btn-primary btn-sm">Edit</a>
+                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal" data-bs-review-id="{{ review.id }}">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        {% if not reviews %}
+            <p>You have not made any reviews yet.</p>
+        {% endif %}
+
+        <!-- Pagination Links -->
+        <div class="d-flex justify-content-center mt-4">
+            <ul class="pagination">
+                {% if reviews.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ reviews.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">Previous</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">Previous</span>
+                    </li>
+                {% endif %}
+
+                {% if reviews.number > 5 %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}">1</a>
+                    </li>
+                    <li class="page-item disabled">
+                        <span class="page-link">..</span>
+                    </li>
+                {% endif %}
+
+                {% for num in reviews.paginator.page_range %}
+                    {% if num >= reviews.number|add:-4 and num <= reviews.number|add:5 %}
+                        <li class="page-item {% if num == reviews.number %}active{% endif %}">
+                            <a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if reviews.paginator.num_pages > reviews.number|add:5 %}
+                    <li class="page-item disabled">
+                        <span class="page-link">..</span>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ reviews.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}">{{ reviews.paginator.num_pages }}</a>
+                    </li>
+                {% endif %}
+
+                {% if reviews.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ reviews.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">Next</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">Next</span>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+    {% include 'bases/footer.html' %}
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this review?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <a id="confirmDeleteButton" class="btn btn-danger">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        var deleteModal = document.getElementById('deleteModal');
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var reviewId = button.getAttribute('data-bs-review-id');
+            var deleteUrl = "delete/review_id_placeholder".replace('review_id_placeholder', reviewId);
+            var confirmDeleteButton = document.getElementById('confirmDeleteButton');
+            confirmDeleteButton.setAttribute('href', deleteUrl);
+        });
+
+        document.getElementById('searchBtn').addEventListener('click', function() {
+            var searchInput = document.querySelector('.search-input');
+            if (searchInput.classList.contains('show')) {
+                document.getElementById('searchForm').submit();
+            } else {
+                searchInput.classList.add('show');
+            }
+        });
+
+        window.setTimeout(function() {
+            const messages = document.getElementById('messages');
+            if (messages) {
+                messages.classList.add('fade');
+            }
+        }, 2000);
+    </script>
+</body>
+</html>

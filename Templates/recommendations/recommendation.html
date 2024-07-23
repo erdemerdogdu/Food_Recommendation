@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommended Meals</title>
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <style>
+        .container {
+            margin-top: 20px;
+        }
+        .meal-card {
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+        .meal-card:hover {
+            transform: translateY(-10px);
+        }
+        .main-card {
+            width: 100%;
+            margin-bottom: 20px;
+            background-color: #f8f9fa;
+            font-size: 1.5rem;
+        }
+        .main-card .card-body {
+            font-size: 1.5rem;
+        }
+        .meal-card img {
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+        .meal-info {
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+{% include 'bases/navbar.html' %}
+    <div class="container">
+        <h1 class="text-center mb-4">Recommended Meals</h1>
+        <div class="row justify-content-center mb-4">
+            {% if recommended_meals %}
+            <div class="col-4">
+                <div class="card main-card">
+                    <!-- <img src="..." class="" alt="Meal Image"> -->
+                    <div class="card-body text-center">
+                        <h2 class="card-title">{{ recommended_meals.0.name }}</h2>
+                        <p class="card-text">{{ recommended_meals.0.description }}</p>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">{{ recommended_meals.0.price }} $</li>
+                            <li class="list-group-item">{{ recommended_meals.0.cuisine_type }} Cuisine</li>
+                        </ul>
+                        <div class="card-body">
+                            <div class="btn-group">
+                                <a href="/reviews/add_review/{{ recommended_meals.0.id }}" class="btn btn-primary">Make Review</a>
+                                <a href="/reviews/mealreviews/{{ recommended_meals.0.id }}" class="btn btn-secondary">Reviews</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        <h3>How adventeuse ı am today ?</h3>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-3 mb-4">
+            {% for meal in recommended_meals|slice:"1:" %}
+            <div class="col">
+                <div class="card meal-card shadow-sm">
+                    <!-- <img src="..." class="card-img-top" alt="Meal Image"> -->
+                    <div class="card-body text-center">
+                        <h2 class="card-title">{{ meal.name }}</h2>
+                        <p class="card-text">{{ meal.description }}</p>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">{{ meal.price }} $</li>
+                            <li class="list-group-item">{{ meal.cuisine_type }} Cuisine</li>
+                        </ul>
+                        <div class="card-body">
+                            <div class="btn-group">
+                                <a href="/reviews/add_review/{{ meal.id }}" class="btn btn-primary">Make Review</a>
+                                <a href="/reviews/mealreviews/{{ meal.id }}" class="btn btn-secondary">Reviews</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+{% include 'bases/footer.html' %}
+</body>
+
+</html>

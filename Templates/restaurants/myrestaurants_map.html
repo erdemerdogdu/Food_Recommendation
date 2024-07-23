@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User's Restaurants Map</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDvcJ3sDlcyPbbQ7SsjNhMwoM7dTCZdr4E"></script>
+    <script>
+        function initMap() {
+            //const restaurants = JSON.parse('{{ restaurants_json|escapejs }}');
+
+            const restaurants = [
+                {% for restaurant in restaurants %}
+                {
+                    name: "{{ restaurant.name|escapejs }}",
+                    address: "{{ restaurant.address|escapejs }}"
+                },
+                {% endfor %}
+            ];
+            console.log(restaurants)
+
+            const geocoder = new google.maps.Geocoder();
+            const mapOptions = {
+                zoom: 16,
+                center: { lat: 0, lng: 0 },
+                streetViewControl: false
+            };
+            const map = new google.maps.Map(document.getElementById('map'), mapOptions);
+            const bounds = new google.maps.LatLngBounds();
+            const markers = [];
+
+            restaurants.forEach((restaurant, index) => {
+                geocoder.geocode({ 'address': restaurant.address }, function (results, status) {
+                    if (status === 'OK') {
+                        const marker = new google.maps.Marker({
+                            position: results[0].geometry.location,
+                            map: map,
+                            title: restaurant.name
+                        });
+                        markers.push(marker);
+                        bounds.extend(results[0].geometry.location);
+                        map.fitBounds(bounds);
+
+                        //addlistener Google Map api method o yüzden üstü çizili
+                        marker.addListener('click', () => {
+                            map.setCenter(marker.getPosition());
+                            map.setZoom(16);
+                        });
+
+                        document.getElementById(`card-${index}`).addEventListener('click', () => {
+                            map.setCenter(marker.getPosition());
+                            map.setZoom(18);
+                        });
+
+                    } else {
+                        console.error('Geocode was not successful for the following reason: ' + status);
+                    }
+                });
+            });
+        }
+    </script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .container {
+            margin:50px auto;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .card {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            animation: slideUp 0.5s ease;
+        }
+
+        .card-header {
+            background-color: #4caf50;
+            color: white;
+            padding: 1rem;
+            font-size: 1.75rem;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .card-body {
+            padding: 2rem;
+            background-color: #ffffff;
+        }
+
+
+        .map-container {
+            margin-top: 30px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+
+        .restaurant-card {
+            cursor: pointer;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            width: 25%;
+        }
+
+        .restaurant-card:hover {
+            background-color: #f1f1f1;
+        }
+
+        .resto{
+            display: flex;
+            max-width: 800px;
+            min-width: 400px;
+            width:100%
+        }
+
+        .mid{
+            margin:0 auto;
+        }
+    </style>
+</head>
+<body onload="initMap()">
+{% include 'bases/navbar.html' %}
+    <div class="container">
+        <div >
+            <div class="col-md-8 mid">
+                <div class="card">
+                    <div class="card-header">
+                        My Restaurants
+                    </div>
+                    <div class="card-body">
+                        <div>
+                            <div class="col-md-10 mid">
+                                <div class="resto col-md-10 mid">
+                                    {% for restaurant in restaurants %}
+                                    <div id="card-{{ forloop.counter0 }}" class="restaurant-card">
+                                        <strong>{{ restaurant.name }}</strong><br>
+                                        <p>{{ restaurant.address }}</p>
+                                        <p>{{ restaurant.phone_number }}</p>
+                                        <p>{{ restaurant.opening_hours }}</p>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="col-md-10 mid">
+                                <div class="map-container">
+                                    <div id="map" style="width: 100%; height: 600px; border-radius: 10px; margin-top: 10px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% include 'bases/footer.html' %}
+</body>
+</html>

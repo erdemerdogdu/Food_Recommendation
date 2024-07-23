@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us</title>
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #ff6b6b, #f8c291);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            animation: fadeInDown 1s ease;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            animation: fadeInUp 1s ease;
+        }
+
+        .section {
+            padding: 4rem 0;
+        }
+
+        .section h2 {
+            color: #ff6b6b;
+            text-align: center;
+            margin-bottom: 2rem;
+            animation: fadeInLeft 1s ease;
+        }
+
+        .team-member {
+            text-align: center;
+            animation: zoomIn 1s ease;
+        }
+
+        .team-member img {
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            animation: zoomIn 1s ease;
+        }
+
+        .team-member h5 {
+            color: #333;
+            animation: fadeInUp 1s ease;
+        }
+
+        .team-member p {
+            color: #777;
+            animation: fadeInUp 1s ease;
+        }
+
+        .mission {
+            background: linear-gradient(45deg, #6a89cc, #82ccdd);
+            color: white;
+            text-align: center;
+            padding: 3rem 1rem;
+            border-top: 5px solid #6a89cc;
+            border-bottom: 5px solid #82ccdd;
+            animation: fadeInUp 1s ease;
+        }
+
+        .mission p {
+            font-size: 1.2rem;
+            margin-bottom: 0;
+        }
+
+        .contact-section {
+            background-color: #fff;
+            padding: 2rem;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 2rem;
+            animation: fadeInRight 1s ease;
+        }
+
+        .contact-section p {
+            color: #333;
+            font-size: 1.1rem;
+            animation: fadeInUp 1s ease;
+        }
+
+
+
+        /* Keyframe animations */
+        @keyframes fadeInDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInLeft {
+            0% {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInRight {
+            0% {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes zoomIn {
+            0% {
+                opacity: 0;
+                transform: scale(0);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    {% include 'bases/navbar.html' %}
+
+    <div class="header">
+        <div class="container">
+            <h1 class="animate__animated animate__fadeInDown">About Us</h1>
+            <p class="animate__animated animate__fadeInUp">Learn more about our team and our mission.</p>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="container">
+            <h2 class="animate__animated animate__fadeInLeft">Our Team</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="team-member animate__animated animate__zoomIn">
+                        <img src="https://via.placeholder.com/150" alt="Team Member" class="img-fluid">
+                        <h5>Erdem Erdoğdu</h5>
+                        <p>CEO & Founder</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="team-member animate__animated animate__zoomIn">
+                        <img src="https://via.placeholder.com/150" alt="Team Member" class="img-fluid">
+                        <h5>Erdem Erdoğdu</h5>
+                        <p>Chief Marketing Officer</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="team-member animate__animated animate__zoomIn">
+                        <img src="https://via.placeholder.com/150" alt="Team Member" class="img-fluid">
+                        <h5>Erdem Erdoğdu</h5>
+                        <p>Lead Developer</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mission animate__animated animate__fadeInUp">
+        <div class="container">
+            <h2>Our Mission</h2>
+            <p>At Foodle, our mission is to provide a platform where food lovers can discover new restaurants, share
+                their dining experiences, and connect with a community of like-minded individuals. We are committed to
+                delivering the best user experience and continuously improving our services based on user feedback.</p>
+        </div>
+    </div>
+
+    <div class="section contact-section">
+        <div class="container">
+            <h2 class="animate__animated animate__fadeInLeft">What We Do</h2>
+            <p class="animate__animated animate__fadeInUp">Foodle is dedicated to connecting food enthusiasts with
+                the best dining experiences. We offer detailed restaurant reviews, meal ratings, and a comprehensive
+                platform for users to share their culinary journeys. Whether you are looking for a place to dine,
+                wanting to share your latest food adventure, or seeking inspiration for your next meal, Foodle is here
+                to help you.</p>
+        </div>
+    </div>
+
+    <div class="section contact-section">
+        <div class="container">
+            <h2 class="animate__animated animate__fadeInRight">Contact Us</h2>
+            <p class="animate__animated animate__fadeInUp">If you have any questions, suggestions, or feedback, feel
+                free to reach out to us. We are always here to help and would love to hear from you!</p>
+            <p class="animate__animated animate__fadeInUp">Email: support@foodle.com</p>
+            <p class="animate__animated animate__fadeInUp">Phone: (123) 456-7890</p>
+        </div>
+    </div>
+
+    {% include 'bases/footer.html' %}
+
+</body>
+
+</html>

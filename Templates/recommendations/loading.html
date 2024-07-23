@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Meal Recommendation</title>
+    <style>
+        .dis_none{
+            display: none !important;
+        }
+
+        @keyframes backgroundAnimation {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 36rem;
+            overflow: hidden;
+            background: linear-gradient(270deg, #00c6ff, #0072ff);
+            background-size: 400% 400%;
+            animation: backgroundAnimation 3s ease infinite;
+        }
+
+
+        .slider {
+            -webkit-appearance: none;
+            display: flex;
+            width: 50%;
+            height: 15px;
+            justify-content: center;
+            align-content: center;
+            margin:20px auto;
+            border-radius: 5px;
+            background: #d3d3d3;
+            outline: none;
+            opacity: 0.7;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+        }
+
+        .slider::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                appearance: none;
+                width: 25px;
+                height: 25px;
+                border-radius: 50%;
+                background: #0072ff;
+                cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 100%;
+            height: 25px;
+            border-radius: 50%;
+            background: #0072ff;
+            cursor: pointer;
+        }
+        .error-page{
+            justify-content: center;
+            align-items: center;
+            height: 36rem;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+</head>
+<body>
+{% include 'bases/navbar.html' %}
+    <div class="dis_none" id="slidecontainer">
+        <h3 class="text-center mb-4">How adventurous ı am today ?</h3>
+        <input type="range" min="0" max="5" value="3" class="slider" id="myrange">
+    </div>
+
+    <div class="loading" id="loading">
+        <div class="d-flex justify-content-center">
+        <div class="spinner-border text-dark" role="status" style="width: 4rem; height: 4rem;">
+        </div>
+        </div>
+    </div>
+    <div class="container" id="container">
+
+    </div>
+{% include 'bases/footer.html' %}
+</body>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let current = 3;
+        fetchRecommendations(current);
+        const slider = document.getElementById("myrange");
+
+        if (slider) {
+            let debounceTimer;
+            slider.addEventListener("input", function() {
+                clearTimeout(debounceTimer);
+                let newValue = this.value;
+                debounceTimer = setTimeout(function() {
+                    if (newValue !== current) {
+                        current = newValue;
+                        document.getElementById("loading").classList.remove("dis_none");
+                        document.getElementById("slidecontainer").classList.add('dis_none');
+                        document.getElementById("container").classList.add('dis_none');
+                        fetchRecommendations(current);
+                    }
+                }, 600); // Adjust the debounce time (in milliseconds) as needed
+            });
+        }
+    });
+
+        function fetchRecommendations(adventurousness) {
+            $.ajax({
+                url: 'getrecommendations/?adventurousness=' + adventurousness,
+                method: "GET",
+                dataType: "json",
+                success: function(data) {
+                    let recommendationsHtml ='</div><h1 class="text-center mb-4">Recommended Meals</h1><div class="row justify-content-center mb-4">';
+                    data.forEach(function(meal) {
+                        recommendationsHtml += `<div class="col-4">
+                <div class="card main-card">
+                    <!-- <img src="..." class="" alt="Meal Image"> -->
+                    <div class="card-body text-center">
+                        <h2 class="card-title">${meal.name}</h2>
+                        <p class="card-text">${meal.description}</p>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">${meal.price} $</li>
+                            <li class="list-group-item">${meal.cuisine} Cuisine</li>
+                        </ul>
+                        <div class="card-body">
+                            <div class="btn-group">
+                                <a href="/reviews/add_review/${ meal.id }" class="btn btn-primary">Make Review</a>
+                                <a href="/reviews/mealreviews/${ meal.id }" class="btn btn-secondary">Reviews</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+                    });
+                    recommendationsHtml += '</div></div>';
+                    let container = document.getElementById("container");
+                    let loading = document.getElementById("loading");
+                    loading.classList.add("dis_none");
+                    document.getElementById("slidecontainer").classList.remove('dis_none');
+                    document.getElementById("container").classList.remove('dis_none');
+                    container.innerHTML = recommendationsHtml;
+                },
+                error: function(xhr, status, error) {
+                    loading.classList.add("dis_none");
+                    document.getElementById("container").innerHTML = '<div class="error-page"><div class="alert-icon mb-4 ">\n' +
+                        '            <i class="bi bi-exclamation-circle-fill"></i>\n' +
+                        '        </div>\n' +
+                        '        <h1>Recommendation Unavailable</h1>\n' +
+                        '        <p>We are sorry, but our recommendation engine is currently unavailable. Please try to make more reviews!</p>\n' +
+                        '        <a href="/home" class="btn btn-primary button">Go to Home Page</a></div>';
+                }
+            });
+        }
+    </script>
+</html>

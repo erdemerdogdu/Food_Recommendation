@@ -1,0 +1,54 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark p-3">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/home">Foodle</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link mx-2 " aria-current="page" href="/recommendations">Get Recommendation</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link mx-2 " aria-current="page" href="/home/aboutus">About Us</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link mx-2" href="/restaurants">Restaurants</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link mx-2" href="/meals">Meals</a>
+                </li>
+                {% if user.is_authenticated %}
+                    {% if user.groups.get.name == "Normal User" %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link mx-2 dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                {{user.groups.get.name}}
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <li><a class="dropdown-item" href="/reviews/myreviews">My Reviews</a></li>
+                                <li><a class="dropdown-item" href="/customusers/profile">Profile</a></li>
+                                <li><a class="dropdown-item" href="/home/logout">Logout</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link mx-2 dropdown-toggle" href="#" id="" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Account
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <li><a class="dropdown-item" href="/restaurants/myrestaurants">My Restaurants</a></li>
+                                <li><a class="dropdown-item" href="/customusers/profile">Profile</a></li>
+                                <li><a class="dropdown-item" href="/home/logout">Logout</a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link mx-2" href="/customusers/login">Login</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
