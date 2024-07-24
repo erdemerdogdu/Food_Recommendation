@@ -10,11 +10,16 @@ import numpy as np
 from textblob import TextBlob
 from sklearn.metrics.pairwise import cosine_similarity
 from scipy.spatial.distance import euclidean
+from django.utils.decorators import method_decorator
+from .decorators import normal_user_required
 Restaurant = apps.get_model('restaurants', 'Restaurant')
 Review = apps.get_model('reviews', 'Review')
 Meal = apps.get_model('meals', 'Meal')
 User = apps.get_model('customusers', 'MyUser')
 
+
+
+@method_decorator(normal_user_required, name='dispatch')
 class LoadingView(View):
     def get(self, request):
         return render(request, 'recommendations/loading.html')

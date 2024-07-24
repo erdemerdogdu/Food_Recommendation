@@ -16,7 +16,27 @@ Review = apps.get_model('reviews', 'Review')
 class RestaurantListView(View):
     def get(self, request):
         restaurants = Restaurant.objects.all()
-        return render(request, 'restaurants/restaurant_list.html', {'restaurants': restaurants})
+        restaurant_data = []
+
+        for restaurant in restaurants:
+            reviews = Review.objects.filter(meal__restaurant=restaurant)
+
+            total_reviews = reviews.count()
+            avg_service_rating = reviews.aggregate(Avg('service_rating'))['service_rating__avg']  or 0
+            avg_taste_rating = reviews.aggregate(Avg('taste_rating'))['taste_rating__avg']  or 0
+            avg_delivery_rating = reviews.aggregate(Avg('delivery_rating'))['delivery_rating__avg']  or 0
+            avg_total_rating = (avg_service_rating + avg_taste_rating + avg_delivery_rating) / 3
+
+            restaurant_data.append({
+                'restaurant': restaurant,
+                'total_reviews': total_reviews,
+                'avg_total_rating': avg_total_rating,
+            })
+
+        context = {
+            'restaurant_data': restaurant_data,
+        }
+        return render(request, 'restaurants/restaurant_list.html', context)
 
 
 class ReviewsStatisticsView(View):
@@ -68,12 +88,12 @@ class AddRestaurantView(View):
 @method_decorator(restaurant_user_required, name='dispatch')
 class EditRestaurantView(View):
     def get(self, request, restaurant_id):
-        restaurant = get_object_or_404(Restaurant, id=restaurant_id)
+        restaurant = get_object_or_404(Restaurant, id=restaurant_id, owner_id=request.user.id)
         form = RestaurantForm(instance=restaurant)
         return render(request, 'restaurants/edit_restaurant.html', {'form': form, 'restaurant': restaurant})
 
     def post(self, request, restaurant_id):
-        restaurant = get_object_or_404(Restaurant, id=restaurant_id)
+        restaurant = get_object_or_404(Restaurant, id=restaurant_id, owner_id=request.user.id)
         form = RestaurantForm(request.POST, instance=restaurant)
         if form.is_valid():
             form.save()
@@ -85,7 +105,7 @@ class EditRestaurantView(View):
 @method_decorator(restaurant_user_required, name='dispatch')
 class DeleteRestaurantView(View):
     def get(self, request, restaurant_id):
-        restaurant = get_object_or_404(Restaurant, id=restaurant_id)
+        restaurant = get_object_or_404(Restaurant, id=restaurant_id, owner_id=request.user.id)
         restaurant.delete()
         messages.success(request, f'Restaurant named {restaurant.name} deleted successfully!')
         return redirect('/restaurants/myrestaurants')  # Redirect to the 'my_restaurants' page

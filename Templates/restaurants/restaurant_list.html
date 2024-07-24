@@ -3,8 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Restaurant Page</title>
     {% load bootstrap5 %}
@@ -14,6 +13,17 @@
         body {
             background-color: #f8f9fa;
         }
+
+        .star-rating {
+            font-size: 2rem;
+            color: #e0e0e0; /* Light gray for unfilled stars */
+            display: inline-block;
+        }
+
+        .star-rating .filled {
+            color: #ffc107; /* Yellow for filled stars */
+        }
+
 
         .album {
             background-color: #f8f9fa;
@@ -38,13 +48,11 @@
             font-weight: bold;
         }
 
-
         .list-group-item {
             background-color: transparent;
             border: none;
             color: #6c757d;
         }
-
 
         .btn-group {
             display: flex;
@@ -72,6 +80,21 @@
             transform: scale(1.05);
         }
 
+        .ratingtype p {
+            margin: 0;
+        }
+
+
+        .star-rating {
+            font-size: 2rem;
+            color: #e0e0e0; /* Light gray for unfilled stars */
+            display: inline-block;
+        }
+
+        .star-rating span.filled {
+            color: #ffc107; /* Yellow for filled stars */
+        }
+
         .animate {
             animation-duration: 1s;
             animation-fill-mode: both;
@@ -82,7 +105,6 @@
                 opacity: 0;
                 transform: translateY(50px);
             }
-
             100% {
                 opacity: 1;
                 transform: translateY(0);
@@ -94,13 +116,11 @@
                 opacity: 0;
                 transform: scale(0.5);
             }
-
             100% {
                 opacity: 1;
                 transform: scale(1);
             }
         }
-
     </style>
 </head>
 
@@ -109,70 +129,46 @@
 
     <div class="album">
         <div class="container">
-
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-                {% for restaurant in restaurants %}
+                {% for data in restaurant_data %}
                 <div class="col">
-                    <div class="col">
-    <div class="card shadow-sm animate animate__fadeInUp" data-restaurant-id="{{ restaurant.id }}">
-        <!-- <img src="..." class="card-img-top" alt="Restaurant Image"> -->
-        <div class="card-body">
-            <h5 class="card-title">{{ restaurant.name }}</h5>
-        </div>
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item">{{ restaurant.address }}</li>
-            <li class="list-group-item">{{ restaurant.opening_hours }}</li>
-            <li class="list-group-item">{{ restaurant.phone_number }}</li>
-        </ul>
-        <div class="card-body">
-            <div class="btn-group">
-                <a href="info/{{restaurant.id}}" class="btn btn-link">Info</a>
-                <a href="/meals/{{restaurant.id}}" class="btn btn-link">Meals</a>
-                <a href="/reviews/{{restaurant.id}}" class="btn btn-link">Reviews</a>
-            </div>
-        </div>
-    </div>
-</div>
+                    <div class="card shadow-sm animate animate__fadeInUp" data-restaurant-id="{{ data.restaurant.id }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ data.restaurant.name }}</h5>
+                            <div class="ratingtype">
+                                <p>Overall Rating:</p>
+                            </div>
+                            <div class="star-rating">
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= data.avg_total_rating %}
+                                        <span class="filled">&#9733;</span>
+                                    {% else %}
+                                        <span>&#9733;</span>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">{{ data.restaurant.address }}</li>
+                            <li class="list-group-item">{{ data.restaurant.opening_hours }}</li>
+                            <li class="list-group-item">{{ data.restaurant.phone_number }}</li>
+                        </ul>
+                        <div class="card-body">
+                            <div class="btn-group">
+                                <a href="info/{{ data.restaurant.id }}" class="btn btn-link">Info</a>
+                                <a href="/meals/{{ data.restaurant.id }}" class="btn btn-link">Meals</a>
+                                <a href="/reviews/{{ data.restaurant.id }}" class="btn btn-link">Reviews</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 {% endfor %}
             </div>
         </div>
     </div>
 
-
     {% include 'bases/footer.html' %}
 
-    <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const restaurantCards = document.querySelectorAll('.card');
-        const popup = document.createElement('div');
-        popup.id = 'popup';
-        document.body.appendChild(popup);
-
-        restaurantCards.forEach(card => {
-            card.addEventListener('mouseenter', function (event) {
-                const restaurantId = card.getAttribute('data-restaurant-id');
-                const rect = card.getBoundingClientRect();
-
-                fetch(`ajax/reviews_statistics/${restaurantId}/`)
-                    .then(response => response.text())
-                    .then(html => {
-                        popup.innerHTML = html;
-                        popup.style.top = `${rect.bottom + window.scrollY}px`;
-                        popup.style.left = `${rect.left}px`;
-                        popup.style.display = 'block';
-                    })
-                    .catch(error => {
-                        console.error('Error fetching review statistics:', error);
-                    });
-            });
-
-            card.addEventListener('mouseleave', function () {
-                popup.style.display = 'none';
-            });
-        });
-    });
-</script>
 </body>
 
 </html>

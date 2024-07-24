@@ -9,5 +9,6 @@ urlpatterns = [
     path('customusers/', include('customusers.urls')),
     path('reviews/', include('reviews.urls')),
     path('recommendations/', include('recommendations.urls')),
-    path('home/', include('home.urls'))
+    path('home/', include('home.urls')),
+    path('', include('home.urls'))
 ]

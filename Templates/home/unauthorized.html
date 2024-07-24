@@ -6,14 +6,22 @@
     <title>Unauthorized Access</title>
     {% load bootstrap5 %}
     {% bootstrap_css %}
+
+    <style>
+        .full{
+            height: 33rem;
+        }
+    </style>
+
 </head>
 <body>
     {% include 'bases/navbar.html' %}
 
-    <div class="container mt-5">
+    <div class="container mt-5 full">
         <div class="alert alert-danger" role="alert">
             <h4 class="alert-heading">Unauthorized Access</h4>
-            <p>You do not have the necessary permissions to access this page. Please contact the administrator if you believe this is an error.</p>
+            <p>You do not have the necessary permissions to access this page.</p>
+            <p>Please login with customer account</p>
             <hr>
             <a href="/home" class="btn btn-primary">Go to Home</a>
         </div>

@@ -40,7 +40,8 @@ class MealsByCuisinesView(View):
 @method_decorator(restaurant_user_required, name='dispatch')
 class AddMealView(View):
     def get(self, request, restaurant_id):
-        form = MealForm(initial={'restaurant': restaurant_id})
+        restaurant = Restaurant.objects.get(id=restaurant_id, owner_id= request.user.id)
+        form = MealForm(initial={'restaurant': restaurant})
         return render(request, 'meals/add_meal.html', {'form': form})
 
     def post(self, request, restaurant_id):
@@ -57,7 +58,7 @@ class AddMealView(View):
 @method_decorator(restaurant_user_required, name='dispatch')
 class MyMealsView(View):
     def get(self, request, restaurant_id):
-        restaurant = get_object_or_404(Restaurant, id=restaurant_id)
+        restaurant = get_object_or_404(Restaurant, id=restaurant_id, owner_id= request.user.id)
         meals = Meal.objects.filter(restaurant=restaurant)
 
         return render(request, 'meals/mymeals.html', {
@@ -69,12 +70,12 @@ class MyMealsView(View):
 @method_decorator(restaurant_user_required, name='dispatch')
 class MealEditView(View):
     def get(self, request, meal_id):
-        meal = get_object_or_404(Meal, id=meal_id)
+        meal = get_object_or_404(Meal, id=meal_id, restaurant__owner_id=request.user.id)
         form = MealForm(instance=meal)
         return render(request, 'meals/edit_meal.html', {'form': form})
 
     def post(self, request, meal_id):
-        meal = get_object_or_404(Meal, id=meal_id)
+        meal = get_object_or_404(Meal, id=meal_id, restaurant__owner_id=request.user.id)
         form = MealForm(request.POST, instance=meal)
         if form.is_valid():
             form.save()
@@ -86,7 +87,7 @@ class MealEditView(View):
 @method_decorator(restaurant_user_required, name='dispatch')
 class DeleteMealView(View):
     def get(self, request, meal_id):
-        meal = get_object_or_404(Meal, id=meal_id)
+        meal = get_object_or_404(Meal, id=meal_id, restaurant__owner_id=request.user.id)
         meal.delete()
         messages.success(request, f'Meal named {meal.name} deleted successfully!')
         return redirect(f'/meals/mymeals/{meal.restaurant.id}')

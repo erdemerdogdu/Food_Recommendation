@@ -111,6 +111,10 @@
                 transform: scale(1);
             }
         }
+
+        .full{
+            min-height:29rem;
+        }
     </style>
 </head>
 
@@ -118,7 +122,7 @@
     {% include 'bases/navbar.html' %}
 
     <div class="album">
-        <div class="container">
+        <div class="container full">
 
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
                 {% for meal in meals %}

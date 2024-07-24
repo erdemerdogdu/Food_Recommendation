@@ -24,12 +24,16 @@
             z-index: 1050;
             margin-top: 10px;
         }
+
+        .full{
+            min-height: 33rem;
+        }
     </style>
 </head>
 <body>
     {% include 'bases/navbar.html' %}
 
-    <div class="container mt-5">
+    <div class="container mt-5 full">
         {% if messages %}
             <div id="messages" class="alert alert-dismissible fade-out fixed-messages">
                 {% for message in messages %}
