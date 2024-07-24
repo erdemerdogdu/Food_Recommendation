@@ -4,6 +4,7 @@ from django.views import View
 from django.apps import apps
 from datetime import timedelta
 from django.utils import timezone
+from django.db.models import Avg
 import pandas as pd
 import numpy as np
 from textblob import TextBlob
@@ -17,13 +18,19 @@ User = apps.get_model('customusers', 'MyUser')
 class LoadingView(View):
     def get(self, request):
         return render(request, 'recommendations/loading.html')
+
 class RecommendView(View):
     def get(self, request):
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             df, cuisine_indexer = self.prepare_data(request)
-            adventurousness = int(request.GET.get('adventurousness', 3))
-            recommended_meals_ids = self.hybrid_recommendation(df, request.user.id, adventurousness)
             recommended_meals = []
+            if df.empty:
+                recommended_meals_ids = list(self.no_reviews())
+                recommended_meals_ids.append(1)
+            else:
+                adventurousness = int(request.GET.get('adventurousness', 3))
+                recommended_meals_ids = self.hybrid_recommendation(df, request.user.id, adventurousness)
+
             for meal_id in recommended_meals_ids:
                 meal = Meal.objects.get(id=meal_id)
                 recommended_meals.append({
@@ -33,10 +40,8 @@ class RecommendView(View):
                     "cuisine": meal.cuisine_type,
                     "description": meal.description
                 })
-            print(recommended_meals)
             return JsonResponse(recommended_meals, safe=False)
-        else:
-            return render(request, 'loading.html')
+
 
     def prepare_data(self, request):
         # User selection must be according to similarity level of the current user
@@ -44,6 +49,10 @@ class RecommendView(View):
         max_users = 10
 
         current_user_reviews = Review.objects.filter(user=request.user).order_by('-created_at')[:max_reviews_per_user]
+        if not current_user_reviews.exists():
+            df = pd.DataFrame()
+            return df, 0
+
         other_users = User.objects.exclude(id=request.user.id).filter(review__isnull=False).distinct()[:max_users]
 
         all_reviews = list(current_user_reviews)
@@ -105,6 +114,14 @@ class RecommendView(View):
         max_distance = 15
         euclidean_score = 1 - (distance / max_distance)
         return euclidean_score
+
+    def no_reviews(self):
+        top_ten_meals_ids = Meal.objects.annotate(
+            average_rating=(Avg('review__delivery_rating') + Avg('review__service_rating') + Avg(
+                'review__taste_rating')) / 3
+        ).order_by('-average_rating').values_list('id', flat=True)[:10]
+
+        return top_ten_meals_ids
 
     def collaborative_filtering(self, df):
         # One User may have multiple reviews for the same meal, so ı get average of weighted_rating
@@ -201,13 +218,10 @@ class RecommendView(View):
         meal_similarity_df = self.collaborative_filtering(df)
         cf_recommendations = self.recommend_meals_cf(meal_similarity_df, user_id, df, adventurousness)
         cb_recommendations = self.cb_recommendation(df, user_id, adventurousness)
-        print(cf_recommendations)
-        print(cb_recommendations)
         common_meals = set(cf_recommendations).intersection(set(cb_recommendations))
 
         prioritized_recommendations = list(common_meals)
 
         prioritized_recommendations += [meal for meal in cf_recommendations if meal not in common_meals]
         prioritized_recommendations += [meal for meal in cb_recommendations if meal not in common_meals]
-        print(prioritized_recommendations)
         return prioritized_recommendations

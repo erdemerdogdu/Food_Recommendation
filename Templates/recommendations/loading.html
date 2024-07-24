@@ -35,7 +35,7 @@
         .slider {
             -webkit-appearance: none;
             display: flex;
-            width: 50%;
+            width: 100%;
             height: 15px;
             justify-content: center;
             align-content: center;
@@ -47,6 +47,8 @@
             -webkit-transition: .2s;
             transition: opacity .2s;
         }
+
+
 
         .slider::-webkit-slider-thumb {
                 -webkit-appearance: none;
@@ -70,6 +72,22 @@
             align-items: center;
             height: 36rem;
         }
+
+        #input{
+            width: 35rem;
+        }
+
+        .spans{
+            display: flex;
+            text-align: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+        span{
+            text-align: center;
+            width: 100px;
+        }
+
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
@@ -79,9 +97,32 @@
 </head>
 <body>
 {% include 'bases/navbar.html' %}
+    <div id="warningModal" class="modal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Warning</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>You do not have enough reviews. Please make more reviews for this functionality </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+    </div>
     <div class="dis_none" id="slidecontainer">
         <h3 class="text-center mb-4">How adventurous ı am today ?</h3>
-        <input type="range" min="0" max="5" value="3" class="slider" id="myrange">
+        <div class="spans">
+            <span>Stay in the Village</span>
+             <div id="input">
+            <input type="range" min="0" max="5" value="3" class="slider" id="myrange">
+        </div>
+            <span>Beyond the Unknown</span>
+        </div>
+
     </div>
 
     <div class="loading" id="loading">
@@ -96,17 +137,18 @@
 {% include 'bases/footer.html' %}
 </body>
     <script>
-    document.addEventListener("DOMContentLoaded", function() {
         let current = 3;
+        let disabled = false;
+    document.addEventListener("DOMContentLoaded", function() {
         fetchRecommendations(current);
         const slider = document.getElementById("myrange");
 
         if (slider) {
             let debounceTimer;
-            slider.addEventListener("input", function() {
+            slider.addEventListener("input", function () {
                 clearTimeout(debounceTimer);
                 let newValue = this.value;
-                debounceTimer = setTimeout(function() {
+                debounceTimer = setTimeout(function () {
                     if (newValue !== current) {
                         current = newValue;
                         document.getElementById("loading").classList.remove("dis_none");
@@ -125,6 +167,15 @@
                 method: "GET",
                 dataType: "json",
                 success: function(data) {
+                    if(data.length>10)
+                    {
+                        data = data.slice(0, 10);
+                        document.getElementById("myrange").value=5;
+                        current=5;
+                        document.getElementById("myrange").disabled = true;
+                        disabled = true;
+                        document.getElementById("myrange").style.cssText=" pointer-events: none;";
+                    }
                     let recommendationsHtml ='</div><h1 class="text-center mb-4">Recommended Meals</h1><div class="row justify-content-center mb-4">';
                     data.forEach(function(meal) {
                         recommendationsHtml += `<div class="col-4">
@@ -166,5 +217,16 @@
                 }
             });
         }
+
+        const input_div = document.getElementById("input");
+            input_div.addEventListener('click', function(event) {
+                if(disabled){
+                    event.stopPropagation();
+                    const warningModal = new bootstrap.Modal(document.getElementById("warningModal"));
+                    warningModal.show();
+            }
+        });
+
+
     </script>
 </html>
